@@ -29,7 +29,7 @@ This project is specifically designed for the **CYD-R** (resistive touch) model.
 
 The easiest way to get DigiCat running:
 
-1. **[📱 Flash DigiCat Now](https://aquascape123.github.io/digicat/)**
+1. **[📱 Flash DigiCat Now](https://aquascape123.github.io/digicat/web_flasher)**
 2. Connect your CYD-R to your computer via USB
 3. Click "Connect" and select your device
 4. Click "Install DigiCat"
