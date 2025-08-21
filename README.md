@@ -17,13 +17,12 @@ A charming virtual cat companion that lives on your ESP32 with touchscreen displ
 ## 🛠️ Hardware Required
 
 - **ESP32 CYD-R (2432S024R)** - Cheap Yellow Display with **resistive** touchscreen
-  - 240x320 ST7789 Display
+  - 2.4" ILI9341 TFT LCD (240x320 resolution)
   - XPT2046 Resistive Touch Controller
   - ESP32 microcontroller
+  - USB-C connector
 - **microSD card** (optional) - for future features
 
-### ⚠️ Important: CYD Variants
-This project is specifically designed for the **CYD-R** (resistive touch) model. If you have the capacitive version (CYD-C), you'll need to modify the touch code.
 
 ## 🚀 Quick Start with Web Flasher
 
