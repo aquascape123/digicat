@@ -9,19 +9,19 @@
       "chipFamily": "ESP32",
       "parts": [
         {
-          "path": "digicat_v1.0.0.bin",
+          "path": "firmware/digicat_v1.0.0.bin?v=1",
           "offset": 65536
         },
         {
-          "path": "boot_app0.bin",
+          "path": "firmware/boot_app0.bin?v=1",
           "offset": 57344
         },
         {
-          "path": "bootloader_qio_80m.bin",
+          "path": "firmware/bootloader_qio_80m.bin?v=1",
           "offset": 4096
         },
         {
-          "path": "partitions.bin",
+          "path": "firmware/partitions.bin?v=1",
           "offset": 32768
         }
       ]
