@@ -52,7 +52,7 @@ XPT2046_Touchscreen by Paul Stoffregen
 ### Setup Steps
 1. **Clone this repository**
    ```bash
-   git clone https://github.com/yourusername/digicat.git
+   git clone https://github.com/aquascape123/digicat.git
    cd digicat
    ```
 
