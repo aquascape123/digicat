@@ -1,20 +1,48 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════════╗
+ * ║                           DigiCat v1.0.0                        ║
+ * ║                    Virtual Pet for ESP32 CYD-R                  ║
+ * ╠══════════════════════════════════════════════════════════════════╣
+ * ║                                                                  ║
+ * ║  🐱 A charming virtual cat companion with pixel art animations  ║
+ * ║  📱 Touch interface for feeding, playing, and petting          ║
+ * ║  🏆 Evolution system from kitten to adult cat                  ║
+ * ║  😴 Dynamic moods, expressions, and sleep cycles               ║
+ * ║  🎮 Chill gameplay with realistic stat progression             ║
+ * ║                                                                  ║
+ * ╠══════════════════════════════════════════════════════════════════╣
+ * ║  Hardware: ESP32 CYD-R (2432S024R) - Resistive Touch Only      ║
+ * ║  Display:  240x320 ST7789 TFT                                  ║
+ * ║  Touch:    XPT2046 Resistive Controller                        ║
+ * ║                                                                  ║
+ * ║  Libraries Required:                                            ║
+ * ║  - TFT_eSPI by Bodmer                                          ║
+ * ║  - XPT2046_Touchscreen by Paul Stoffregen                     ║
+ * ║                                                                  ║
+ * ║  GitHub: https://github.com/aquascape123/digicat               ║
+ * ║  License: MIT                                                   ║
+ * ║                                                                  ║
+ * ║  Made with ❤️ for the ESP32 maker community                    ║
+ * ╚══════════════════════════════════════════════════════════════════╝
+ */
+
 #include <TFT_eSPI.h>
 #include <SPI.h>
 #include <XPT2046_Touchscreen.h>
 
 TFT_eSPI tft = TFT_eSPI();
 
-// Touchscreen setup per CYD-R
-#define XPT2046_IRQ 36   // T_IRQ
-#define XPT2046_MOSI 13  // T_DIN
-#define XPT2046_MISO 12  // T_OUT
-#define XPT2046_CLK 14   // T_CLK
-#define XPT2046_CS 33    // T_CS
+// Touchscreen setup for ESP32 CYD-R (2432S024R)
+#define XPT2046_IRQ 36   // T_IRQ - Touch interrupt pin
+#define XPT2046_MOSI 13  // T_DIN - SPI MOSI
+#define XPT2046_MISO 12  // T_OUT - SPI MISO  
+#define XPT2046_CLK 14   // T_CLK - SPI Clock
+#define XPT2046_CS 33    // T_CS  - Touch chip select
 
 SPIClass touchscreenSPI = SPIClass(HSPI);
 XPT2046_Touchscreen touchscreen(XPT2046_CS, XPT2046_IRQ);
 
-// Pet State
+// Pet State Structure
 struct Pet {
   String name;
   int happiness;
@@ -31,13 +59,13 @@ struct Pet {
   int animationFrame;
 } pet;
 
-// UI Layout
-const int SCREEN_WIDTH = 240;   // CYD-R dimensions
+// UI Layout for 240x320 portrait display
+const int SCREEN_WIDTH = 240;   
 const int SCREEN_HEIGHT = 320;
-const int PET_X = 80;           // Moved left from center (was 120)
-const int PET_Y = 260;          // Moved lower (was 240)
+const int PET_X = 80;           // Cat position (lower-left area)
+const int PET_Y = 260;          
 
-// Touch buttons - only 3 now, bigger
+// Touch button definitions (3 buttons total)
 struct TouchButton {
   int x, y, width, height;
   String label;
@@ -46,12 +74,12 @@ struct TouchButton {
 };
 
 TouchButton buttons[3] = {
-  {20, 50, 90, 45, "FEED", TFT_YELLOW, false},     // Feed button (bigger)
-  {130, 50, 90, 45, "PLAY", TFT_GREEN, false},     // Play button (bigger)
-  {160, 270, 70, 35, "RESET", TFT_RED, false}      // Reset in bottom right
+  {20, 50, 90, 45, "FEED", TFT_YELLOW, false},     // Feed button
+  {130, 50, 90, 45, "PLAY", TFT_GREEN, false},     // Play button  
+  {160, 270, 70, 35, "RESET", TFT_RED, false}      // Reset button (bottom right)
 };
 
-// Colors
+// Color definitions
 const uint16_t BG_COLOR = TFT_CYAN;
 const uint16_t UI_COLOR = TFT_BLACK;
 const uint16_t BAR_BG = TFT_WHITE;
@@ -68,22 +96,40 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
   
-  Serial.println("=== Catgotchi - Virtual Cat Pet ===");
+  Serial.println("╔══════════════════════════════════════════╗");
+  Serial.println("║            DigiCat v1.0.0                ║");
+  Serial.println("║        Virtual Pet for ESP32 CYD-R       ║");
+  Serial.println("╚══════════════════════════════════════════╝");
+  Serial.println();
   
-  // Initialize touchscreen
+  // Initialize touchscreen with dedicated SPI
+  Serial.println("🔧 Initializing touchscreen...");
   touchscreenSPI.begin(XPT2046_CLK, XPT2046_MISO, XPT2046_MOSI, XPT2046_CS);
   touchscreen.begin(touchscreenSPI);
   touchscreen.setRotation(1);
+  Serial.println("✅ Touchscreen ready!");
   
   // Initialize display (portrait mode rotated 180°)
+  Serial.println("🖥️  Initializing display...");
   tft.init();
   tft.setRotation(2); // Portrait rotated 180 degrees
+  Serial.println("✅ Display ready!");
   
   // Initialize pet
+  Serial.println("🐱 Initializing DigiCat...");
   initializePet();
+  Serial.println("✅ DigiCat ready!");
   
-  Serial.println("Catgotchi started!");
-  Serial.println("Touch buttons to interact with your cat");
+  Serial.println();
+  Serial.println("🎮 Controls:");
+  Serial.println("   📱 Touch buttons to interact");
+  Serial.println("   🍖 FEED - Reduce hunger");
+  Serial.println("   🎾 PLAY - Increase happiness");
+  Serial.println("   🔄 RESET - Start over");
+  Serial.println("   👋 Pet cat directly for bonus happiness!");
+  Serial.println();
+  Serial.println("🎯 Your DigiCat adventure begins now!");
+  Serial.println("═══════════════════════════════════════════");
   
   drawScreen();
 }
@@ -127,7 +173,7 @@ void loop() {
 }
 
 void initializePet() {
-  pet.name = "Catgotchi";
+  pet.name = "DigiCat";
   pet.happiness = 50;
   pet.hunger = 30;
   pet.health = 80;
