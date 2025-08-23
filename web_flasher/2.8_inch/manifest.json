@@ -1,26 +1,28 @@
 {
-  "name": "DigiCat 2.8inch",
-  "version": "1.0.0", 
+  "name": "DigiCat",
+  "version": "1.0.0",
+  "home_assistant_domain": "",
   "new_install_prompt_erase": true,
+  "new_install_improv_wait_time": 0,
   "builds": [
     {
       "chipFamily": "ESP32",
       "parts": [
         {
-          "path": "firmware/bootloader_qio_80m.bin",
-          "offset": 4096
+          "path": "firmware/digicat_2.8_v1.0.0.bin?v=1",
+          "offset": 65536
         },
         {
-          "path": "firmware/partitions.bin", 
-          "offset": 32768
-        },
-        {
-          "path": "firmware/boot_app0.bin",
+          "path": "firmware/boot_app0.bin?v=1",
           "offset": 57344
         },
         {
-          "path": "firmware/digicat_2.8_v1.0.0.bin",
-          "offset": 65536
+          "path": "firmware/bootloader_qio_80m.bin?v=1",
+          "offset": 4096
+        },
+        {
+          "path": "firmware/partitions.bin?v=1",
+          "offset": 32768
         }
       ]
     }
