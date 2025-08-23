@@ -339,13 +339,13 @@
                 </div>
             </div>
 
-            <esp-web-install-button manifest="./manifest_2.8inch.json">
+            <esp-web-install-button manifest="./manifest.json">
                 <button slot="activate">🐱 Install DigiCat for 2.8" Display</button>
             </esp-web-install-button>
 
             <p style="text-align: center; margin-top: 20px; color: #666;">
                 📝 <strong>Note:</strong> This version is specifically configured for 2.8" ILI9341 displays.<br>
-                For 2.4" CYD-R displays, use the <a href="index.html">standard version</a>.
+                For 2.4" CYD-R displays, use the <a href="../2.4_inch/">standard version</a>.
             </p>
         </div>
 
@@ -384,7 +384,7 @@
                             border-radius: 10px;
                             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                             z-index: 1000;
-                            font-weight: bold;
+            font-weight: bold;
                         `;
                         successMsg.textContent = '🎉 DigiCat 2.8" installed successfully!';
                         document.body.appendChild(successMsg);
