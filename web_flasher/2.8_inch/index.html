@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiCat 2.8" - ESP32 Web Flasher</title>
+    <script type="module" src="https://unpkg.com/esp-web-tools@9.0.3/dist/web/install-button.js?module"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .version-badge {
+            background: linear-gradient(45deg, #FF9500, #FF6B35);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #4ECDC4;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .feature p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .requirements {
+            background: #fff3e0;
+            border: 2px solid #ffb74d;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .requirements h3 {
+            color: #e65100;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .requirements li {
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+            color: #bf360c;
+        }
+
+        .requirements li:before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+        }
+
+        .install-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .install-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #4ECDC4;
+            margin-bottom: 30px;
+        }
+
+        .install-steps {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #4ECDC4;
+        }
+
+        .step-number {
+            background: #4ECDC4;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: #333;
+            line-height: 1.4;
+        }
+
+        esp-web-install-button {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+
+        esp-web-install-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-radius: 15px;
+        }
+
+        .footer a {
+            color: #4ECDC4;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .supported-displays {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .supported-displays h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .display-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .display-item {
+            background: #f1f8e9;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐱 DigiCat</h1>
+            <p class="subtitle">Virtual Pet for ESP32</p>
+            <div class="version-badge">🖥️ 2.8" Display Version</div>
+            <p>A charming virtual cat companion that lives on your ESP32 with 2.8" touchscreen display!</p>
+        </div>
+
+        <div class="supported-displays">
+            <h3>✅ Supported 2.8" Displays</h3>
+            <div class="display-list">
+                <div class="display-item">
+                    <strong>Generic 2.8" ILI9341</strong><br>
+                    240x320 TFT + XPT2046 Touch
+                </div>
+                <div class="display-item">
+                    <strong>Arduino 2.8" TFT Shield</strong><br>
+                    ILI9341 based displays
+                </div>
+                <div class="display-item">
+                    <strong>ESP32 2.8" Development Boards</strong><br>
+                    With resistive touchscreen
+                </div>
+                <div class="display-item">
+                    <strong>Compatible Pin Configurations</strong><br>
+                    Multiple pin layouts supported
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Pixel Art Cat</h3>
+                <p>Beautiful hand-crafted cat animations with expressions and emotions</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Touch Interface</h3>
+                <p>Intuitive resistive touch controls optimized for 2.8" displays</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏆</div>
+                <h3>Evolution System</h3>
+                <p>Watch your kitten grow into an adult cat over time</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">😴</div>
+                <h3>Chill Gameplay</h3>
+                <p>Relaxing experience with slow stat changes - perfect for busy life</p>
+            </div>
+        </div>
+
+        <div class="requirements">
+            <h3>⚠️ Hardware Requirements</h3>
+            <ul>
+                <li><strong>ESP32 Development Board</strong> - Any ESP32 with sufficient pins</li>
+                <li><strong>2.8" TFT Display</strong> - ILI9341 driver with 240x320 resolution</li>
+                <li><strong>XPT2046 Touch Controller</strong> - Resistive touchscreen support</li>
+                <li><strong>USB Cable</strong> - To connect your device to computer</li>
+                <li><strong>Chrome or Edge Browser</strong> - Web Serial API support required</li>
+            </ul>
+        </div>
+
+        <div class="install-section">
+            <h2 class="install-title">🚀 Install DigiCat 2.8" in 3 Steps</h2>
+            
+            <div class="install-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <strong>Connect Your ESP32:</strong> Plug your ESP32 with 2.8" display into your computer via USB cable
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <strong>Click Install:</strong> Press the button below and select your device from the popup
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <strong>Enjoy:</strong> Watch DigiCat come to life on your 2.8" screen and start taking care of your new pet!
+                    </div>
+                </div>
+            </div>
+
+            <esp-web-install-button manifest="./manifest_2.8inch.json">
+                <button slot="activate">🐱 Install DigiCat for 2.8" Display</button>
+            </esp-web-install-button>
+
+            <p style="text-align: center; margin-top: 20px; color: #666;">
+                📝 <strong>Note:</strong> This version is specifically configured for 2.8" ILI9341 displays.<br>
+                For 2.4" CYD-R displays, use the <a href="index.html">standard version</a>.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>
+                🛠️ <strong>Manual Installation:</strong> Need to customize pin configurations? 
+                <a href="https://github.com/aquascape123/digicat" target="_blank">Download from GitHub</a>
+            </p>
+            <p style="margin-top: 10px;">
+                Made with ❤️ for the ESP32 maker community | 
+                <a href="https://github.com/aquascape123/digicat" target="_blank">GitHub</a> | 
+                <a href="mailto:support@digicat.com">Support</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const installButton = document.querySelector('esp-web-install-button');
+            
+            if (installButton) {
+                installButton.addEventListener('state-changed', (ev) => {
+                    console.log('DigiCat 2.8" Install State:', ev.detail.state);
+                    
+                    if (ev.detail.state === 'installed') {
+                        // Show success message
+                        const successMsg = document.createElement('div');
+                        successMsg.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: #4CAF50;
+                            color: white;
+                            padding: 15px 20px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                            z-index: 1000;
+                            font-weight: bold;
+                        `;
+                        successMsg.textContent = '🎉 DigiCat 2.8" installed successfully!';
+                        document.body.appendChild(successMsg);
+                        
+                        setTimeout(() => {
+                            successMsg.remove();
+                        }, 5000);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
