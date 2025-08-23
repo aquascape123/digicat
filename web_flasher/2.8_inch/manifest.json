@@ -1,6 +1,6 @@
 {
   "name": "DigiCat 2.8inch",
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "new_install_prompt_erase": true,
   "builds": [
     {
