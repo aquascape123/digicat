@@ -1,163 +1,108 @@
-# 🐱 DigiCat - Virtual Pet for ESP32
+# 🐱 DigiCat - Virtual Pet for the ESP32 "Cheap Yellow Display"
 
-A charming virtual cat companion that lives on your ESP32 with touchscreen display! Watch your pixel art cat grow, play, and evolve while you care for it.
+A tiny cat that lives on your desk. Feed it, play with it, stroke it, put it to bed,
+and watch it grow from kitten to adult cat. It remembers everything across power cycles.
 
+![case preview](case/preview.png)
 
-## ✨ Features
+## ✨ What's new in v2
 
-- 🎨 **Beautiful Pixel Art Cat** - Detailed animations with expressions, blinking, and movement
-- 📱 **Touch Interface** - Intuitive touch controls for feeding, playing, and petting
-- 🎭 **Dynamic Expressions** - Cat's mood changes based on happiness, hunger, and health
-- 🏆 **Evolution System** - Watch your kitten grow into an adult cat
-- 😴 **Sleep Mode** - Cat sleeps when health is low
-- ❤️ **Interactive Petting** - Touch the cat directly for bonus happiness
-- 🎮 **Chill Gameplay** - Relaxing experience with slow stat changes
-- 🎪 **Smooth Animations** - Jumping, eating, and idle movements
+- **Smooth animations**: the room is drawn off-screen and pushed in one go, so no more flicker.
+- **Never blocks**: animations run while the touch screen stays responsive (v1 froze for up to 2 s per action).
+- **Saves your cat** to flash: stats and age survive a reboot.
+- **Four needs**: Food, Fun, Energy, Health. All bars mean "higher is better".
+- **Sleep mode**: lights off, the cat curls up and recovers energy, and the backlight dims.
+- **Stroke the cat** for hearts. Stroking repeatedly keeps it purring, but it can't be spammed for points.
+- **Safe reset**: hold the title bar for 3 s, then confirm. No more accidental RESET button.
+- **Touch calibration** on first boot, saved to flash.
+- **Auto-dim** after 90 s idle. The on-board LED blinks red when the cat needs you.
+- **One sketch for both boards**, configured in code. No more copying `User_Setup.h` into a library.
+- **New 3D-printed case** shaped like a cat's head, with a tail stand.
 
-## 🛠️ Hardware Required
+## 🛠️ Hardware
 
-- **ESP32 CYD-R (2432S024R)** - Cheap Yellow Display with **resistive** touchscreen
-  - 2.4" ILI9341 TFT LCD (240x320 resolution)
-  - XPT2046 Resistive Touch Controller
-  - ESP32 microcontroller
-  - USB-C connector
-- **microSD card** (optional) - for future features
+| Board | Display | Status |
+|---|---|---|
+| **ESP32-2432S024R** (CYD 2.4") | 240x320, ST7789 or ILI9341, resistive | default, case included |
+| **ESP32-2432S028R** (CYD 2.8") | 240x320 ILI9341, resistive | set `DIGICAT_BOARD` in `config.h` |
 
+## 🚀 Quick start: web flasher
 
-## 🚀 Quick Start with Web Flasher
+1. Open **[the DigiCat web flasher](https://aquascape123.github.io/digicat/web_flasher)** in Chrome or Edge
+2. Pick your board size, connect it over USB, then click *Install*
+3. On first boot, tap the four arrow tips to calibrate the touch screen
 
-The easiest way to get DigiCat running:
+## 🔧 Build it yourself
 
-1. **[📱 Flash DigiCat Now](https://aquascape123.github.io/digicat/web_flasher)**
-2. Connect your CYD-R to your computer via USB
-3. Click "Connect" and select your device
-4. Click "Install DigiCat"
-5. Enjoy your new virtual pet! 🎉
+1. Arduino IDE 2.x with **esp32 by Espressif** (built and tested with 2.0.14)
+2. Library Manager: install **LovyanGFX**. TFT_eSPI and XPT2046_Touchscreen are no longer needed.
+3. Open `firmware/DigiCat/DigiCat.ino`, check the board in `config.h`
+4. Board: **ESP32 Dev Module**, then Upload
 
-## 🔧 Manual Installation
-
-### Prerequisites
-- Arduino IDE 2.0+
-- ESP32 Board Package
-- Required Libraries (see below)
-
-### Libraries Required
-Install these through Arduino Library Manager:
+Command line:
+```bash
+arduino-cli compile --fqbn esp32:esp32:esp32 firmware/DigiCat
 ```
-TFT_eSPI by Bodmer
-XPT2046_Touchscreen by Paul Stoffregen
+For the 2.8" board, add `--build-property "compiler.cpp.extra_flags=-DDIGICAT_BOARD=2"`.
+
+### If something looks wrong
+- **Wrong colours or inverted image**: in `config.h`, set `PANEL_IS_ILI9341 1` (2.4" boards ship with either controller), or flip `PANEL_INVERT` / `PANEL_RGB_ORDER`.
+- **Upside down**: change `SCREEN_ROTATION` (0 or 2).
+- **Touch is off**: hold a finger on the screen during the splash to calibrate again.
+- **Testing the game**: set `SIM_MINUTE_MS` to `1000` to run 60x faster.
+
+## 🎮 How to play
+
+| | |
+|---|---|
+| 🐟 **FEED** | +Food. A full cat refuses, so check the bar first |
+| ⚽ **PLAY** | +Fun, but costs Energy and a bit of Food. A tired cat won't play |
+| 🌙 **SLEEP / WAKE** | Lights off: Energy recovers quickly. The cat wakes up by itself when rested |
+| 👋 **Touch the cat** | Hearts and a little Fun |
+| ⏱️ **Hold the title** | 3 s, then confirm, to start over with a new kitten |
+
+Health drops slowly while any need is critical, and recovers while all of them are fine.
+A very tired cat falls asleep on its own. Kitten → Young cat after 1 h → Adult cat after 6 h
+(powered-on time). All rates are in `config.h`.
+
+## 🖨️ The case
+
+A cat-head shell with ears. The USB-C cable comes out between the ears, and a curled tail
+holds the screen at 16°. Four parts, all in `case/stl`:
+
+| Part | Print orientation | Notes |
+|---|---|---|
+| `digicat_fit_test.stl` | face down | **Print this first** (~20 min): drop the board in and check the screen opening |
+| `digicat_body.stl` | face down (textured plate looks great) | inner ears and paw prints are 0.6 mm deep, so you can fill them with a second colour |
+| `digicat_back.stl` | outer face down | 4 posts clamp the PCB against the front |
+| `digicat_tail.stl` | on its side | the stand |
+
+PLA/PETG, 0.2 mm layers, 3 walls, no supports.
+
+**Hardware:** 6x M2 self-tapping screws, 6-8 mm long: 4 hold the back plate, 2 fix the tail from the inside.
+
+**Assembly:** screw the tail onto the back plate (screw heads go on the inside) → put the board
+face down into the body → close with the back plate.
+
+### Adjusting the case
+The case is generated by `case/build_case.py`. All dimensions are parameters at the top of the file.
+```bash
+pip install manifold3d trimesh numpy
+python case/build_case.py
 ```
+If the fit test shows the screen opening is off-centre, change `WIN_Y`. Other parameters:
+`LCD_STACK` for display thickness, `TILT` for the viewing angle, `LIGHT_X/LIGHT_Y` to move the
+LED glow spot.
 
-### Setup Steps
-1. **Clone this repository**
-   ```bash
-   git clone https://github.com/aquascape123/digicat.git
-   cd digicat
-   ```
-
-2. **Configure TFT_eSPI**
-   - Copy `User_Setup.h` to your TFT_eSPI library folder
-   - Or replace the existing one in: `Arduino/libraries/TFT_eSPI/User_Setup.h`
-
-3. **Upload the code**
-   - Open `DigiCat.ino` in Arduino IDE
-   - Select board: "ESP32 Dev Module"
-   - Select correct COM port
-   - Upload!
-
-## 🎮 How to Play
-
-### Controls
-- **🍖 FEED Button** - Give food to your cat (reduces hunger)
-- **🎾 PLAY Button** - Play with your cat (increases happiness)  
-- **🔄 RESET Button** - Reset your cat back to kitten stage
-- **👋 Pet the Cat** - Touch the cat directly for bonus happiness and hearts!
-
-### Stats
-- **🍽️ Hunger** - Increases slowly over time (feed to reduce)
-- **😸 Happiness** - Decreases without attention (play to increase)
-- **❤️ Health** - Depends on hunger and happiness levels
-- **📅 Age** - Your cat evolves: Kitten → Young Cat → Adult Cat
-
-### Tips
-- 🏃‍♂️ Playing makes your cat hungry, so balance food and fun!
-- 😴 If health gets too low, your cat will sleep until it recovers
-- ❤️ Petting gives happiness without making the cat hungry
-- 🎯 DigiCat is designed to be chill - stats change slowly
-
-## 📁 Project Structure
-
+## 📁 Project structure
 ```
-digicat/
-├── DigiCat.ino           # Main Arduino sketch
-├── User_Setup.h          # TFT_eSPI configuration
-├── web_flasher/          # Web flasher files
-│   ├── index.html
-│   ├── manifest.json
-│   └── firmware.bin
-├── images/               # Screenshots and demos
-├── 3d_case/             # 3D printable case files
-│   └── DigiCat_Case.stl
-├── schematic/           # Wiring diagrams
-└── README.md
+firmware/DigiCat/   Arduino sketch (config.h, display.h, pet.*, art.*, ui.*)
+case/               case generator, STL files, preview
+web_flasher/        browser-based installer (ESP Web Tools)
 ```
-
-## 🎨 Customization
-
-### Changing Cat Colors
-Edit these constants in the code:
-```cpp
-const uint16_t CAT_BODY = TFT_ORANGE;    // Cat body color
-const uint16_t CAT_STRIPE = TFT_BLACK;   // Stripe color  
-const uint16_t CAT_EYES = TFT_GREEN;     // Eye color
-const uint16_t CAT_NOSE = TFT_PINK;      // Nose color
-```
-
-### Adjusting Game Speed
-Modify timing constants:
-```cpp
-// Update frequency (30 seconds = chill mode)
-if (currentTime - pet.lastUpdate > 30000) 
-
-// Hunger rate (5 minutes between increases)
-if (millis() - pet.lastFeed > 300000)
-```
-
-## 🐛 Troubleshooting
-
-### Touch Not Working
-- Verify you have the CYD-R (resistive) model
-- Check wiring connections
-- Try adjusting touch calibration values in the code
-
-### Display Issues
-- Ensure User_Setup.h is properly configured
-- Check display rotation setting: `tft.setRotation(2)`
-- Verify pin definitions match your board
-
-### Cat Behavior Issues
-- Stats change slowly by design (every 30 seconds)
-- Try feeding/playing and wait for the next update cycle
-- Use Serial Monitor to debug stat values
-
-## 🤝 Contributing
-
-We love contributions! Here's how you can help:
-
-- 🐛 **Bug Reports** - Found an issue? Open an issue!
-- ✨ **Feature Requests** - Ideas for new cat behaviors?
-- 🎨 **Art Improvements** - Better pixel art or animations
-- 📚 **Documentation** - Help improve this README
-- 🌍 **Translations** - Localize DigiCat for other languages
 
 ## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT, see [LICENSE](LICENSE).
 
 ## 🙏 Credits
-
-- **Pixel Art Design** - Custom cat sprites and animations
-- **TFT_eSPI Library** - Bodmer's excellent display library
-- **XPT2046 Library** - Paul Stoffregen's touch library
-- **CYD Community** - For hardware documentation and support
-- **ESP32 Arduino Core** - Espressif's Arduino framework
+LovyanGFX by lovyan03, the ESP32 Arduino core by Espressif, and the CYD community.
